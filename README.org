@@ -1,8 +1,8 @@
 #+title:  usb Tethered Mobile Phone Linux Router
 #+OPTIONS: toc:4
 
-Authors: [[http://mohsen.1.banan.byname.net][Mohsen Banan]]
-Date: <2022-02-19 Sat 19:51>
+Authors: [[http://mohsen.1.banan.byname.net][Mohsen Banan]] ---
+Date: <2022-02-19 Sat 19:51> ---
 Last Updated: <2022-02-19 Sat 19:51>
 
 Given:
@@ -18,30 +18,39 @@ we create a Wide-Area Mobile LAN.
 
 * Table Of Contents     :TOC:
 - [[#scope][Scope]]
-  - [[#this-is-not-just-about-usb-tethering-we-also-create-a-lan][This is not just about usb tethering. We also create a LAN.]]
-  - [[#this-is-not-about-usb-tethering-with-en-existing-we-create-our-own-router][This is not about usb tethering with en existing. We create our own router.]]
+  - [[#this-is-not-just-about-usb-tethering][This is not just about usb tethering.]]
+  - [[#this-is-not-about-usb-tethering-with-an-existing-router][This is not about usb tethering with an existing router.]]
 - [[#uses][Uses]]
-  - [[#a-secondary-wan-router][A secondary WAN router]]
-  - [[#a-failover-router][A Failover router]]
-  - [[#a-mobile-lan-say-inside-of-an-rv-or-a-boat][A Mobile LAN. Say inside of an RV or a Boat.]]
 - [[#do-it-yourself-diy-and-as-a-bisos-general-purpose-server-appliance-bisos-gpsa][Do It Yourself (DIY) And As A BISOS General Purpose Server Appliance (BISOS-GPSA)]]
 - [[#main-steps][Main Steps]]
   - [[#tethering-to-mobile-phone][Tethering To Mobile Phone]]
   - [[#ethernetnetwork-interface-naming-----snpa-ids-subnetwork-point-of-attachement-identifiers][Ethernet/Network interface naming --- SNPA-Ids (Subnetwork Point-Of-Attachement Identifiers)]]
-  - [[#install-and-configure-dhcpd-on-our-router][Install and configure dhcpd on our router]]
+  - [[#create-a-minimal-lan][Create a minimal LAN]]
+  - [[#install-configure-and-test-dhcpd-on-our-router][Install, configure and test dhcpd on our-router]]
+  - [[#enable-ipforwarding-on-our-router][Enable IPForwarding On Our-router]]
+  - [[#setup-nat-on-our-router][Setup NAT On Our-router]]
+  - [[#end-to-end-testing][End-to-End testing]]
+  - [[#making-it-all-persistent][Making It All persistent]]
 - [[#add-ons-considerations][Add-Ons Considerations]]
   - [[#in-combination-with-other-links-as-a-failover-wan-router][In combination With Other Links As a Failover WAN-Router]]
   - [[#in-combination-with-a-wi-fi-bridge][In combination with a Wi-Fi bridge]]
-- [[#ipforwarding-general-purpose-server-appliance-----bisos-gspa][IPForwarding General Purpose Server Appliance --- BISOS-GSPA]]
+- [[#ipforwarding-general-purpose-server-appliance-----ipforwarding-bisos-gspa][IPForwarding General Purpose Server Appliance --- IPForwarding-BISOS-GSPA]]
 
 * Scope
-** This is not just about usb tethering. We also create a LAN.
-** This is not about usb tethering with en existing. We create our own router.
+** This is not just about usb tethering.
+We also create a LAN. This is about providing access to the phone's data
+connectivity by all hosts on a LAN.
+
+** This is not about usb tethering with an existing router.
+Here we create our own router from scratch. We don't add a phone to an
 
 * Uses
-** A secondary WAN router
-** A Failover router
-** A Mobile LAN. Say inside of an RV or a Boat.
+
+There are manu uses for usb tethered mobile phone linux router, including:
+
+- A secondary WAN router to be used as a spare
+- A Failover router
+- A Mobile LAN. Say inside of an RV or a Boat.
 
 * Do It Yourself (DIY) And As A BISOS General Purpose Server Appliance (BISOS-GPSA)
 The information in here is provided as DIY instructions.
@@ -66,8 +75,13 @@ Through out the rest of this document we will be reffering to device  interfaces
 The phone USB device -- typically /dev/usb0 -- will be called "usb-snpa".
 The LAN device -- typically something like /dev/enp3s0 -- will be called "lan-snpa".
 
-** Install and configure dhcpd on our router
+** Create a minimal LAN
 
+Setup a minmal LAN with two hosts. Our-router and a "testing-host" on the lan-snpa.
+
+** Install, configure and test dhcpd on our-router
+
+To install the dhcp server
 #+begin_src bash
 sudo apt-get install isc-dhcp-server
 #+end_src
@@ -80,10 +94,53 @@ lcaDhcpServerBinsPrep.sh
 svcDhcpSysdAdmin.sh
 #+end_src
 
+Plug the testing-host on our-lan, verify that it got the right values from our-router.
 
+** Enable IPForwarding On Our-router
+#+begin_src bash
+echo 1 > /proc/sys/net/ipv4/ip_forward
+#+end_src
+
+** Setup NAT On Our-router
+
+#+begin_src bash
+/sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+/sbin/iptables -A FORWARD -i eth0 -o eth1 -m state  --state RELATED,ESTABLISHED -j ACCEPT
+/sbin/iptables -A FORWARD -i eth1 -o eth0 -j ACCEPT
+#+end_src
+
+** End-to-End testing
+
+With these in place, you can now ping a remote host from the testing-host. So, on testing-host try "ping 8.8.8.8".
+
+You now have yourself a usb Tethered Mobile Phone Linux Router.
+
+** Making It All persistent
+
+These DIY instructions do not include information about making it all be
+persistent. You can do that on your own, or better yet use the IPForwarding-BISOS-GSPA.
 
 * Add-Ons Considerations
+A usb Tethered Mobile Phone Linux Router, can be more than just that.
+Here are some additions to consider.
+
 ** In combination With Other Links As a Failover WAN-Router
+The usb tethered mobile phone can be considered an additional WAN link for an existing router.
+
 ** In combination with a Wi-Fi bridge
 
-* IPForwarding General Purpose Server Appliance --- BISOS-GSPA
+Our-router's hardwar platform usually includes WiFi capabilities. We can turn
+that into an access point. At that point you have the equivalent of
+Wifi-tethering plus wired LAN access plus full control.
+
+* IPForwarding General Purpose Server Appliance --- IPForwarding-BISOS-GSPA
+
+To setup your BISOS IPForwarding General Purpose Server Appliance:
+
+- Decide on whether you want a physical or a virtual appliance.
+- Bootstrap a generic BISOS platform.
+- Obtain the IPForwarding-BISOS-GSPA-BPO (ByStar Portable Object) and
+  enhance the BISOS platform to a IPForwarding-BISOS-GSPA platform.
+- Configure your IPForwarding-BISOS-GSPA platform using supplied Blee-Panels
+- Save your specific configuration platform in your own BPO.
+- You can then reproduce your pre-configured IPForwarding-BISOS-GSPA with your own BPO.

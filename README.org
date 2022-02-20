@@ -1,0 +1,89 @@
+#+title:  usb Tethered Mobile Phone Linux Router
+#+OPTIONS: toc:4
+
+Authors: [[http://mohsen.1.banan.byname.net][Mohsen Banan]]
+Date: <2022-02-19 Sat 19:51>
+Last Updated: <2022-02-19 Sat 19:51>
+
+Given:
+
+- A Mobile Phone
+- A USB Cable
+- A Laptop or a Raspberry Pi (our router)
+- A plain Debian Linux distro
+- An ethernet switch
+
+we create a Wide-Area Mobile LAN.
+
+
+* Table Of Contents     :TOC:
+- [[#scope][Scope]]
+  - [[#this-is-not-just-about-usb-tethering-we-also-create-a-lan][This is not just about usb tethering. We also create a LAN.]]
+  - [[#this-is-not-about-usb-tethering-with-en-existing-we-create-our-own-router][This is not about usb tethering with en existing. We create our own router.]]
+- [[#uses][Uses]]
+  - [[#a-secondary-wan-router][A secondary WAN router]]
+  - [[#a-failover-router][A Failover router]]
+  - [[#a-mobile-lan-say-inside-of-an-rv-or-a-boat][A Mobile LAN. Say inside of an RV or a Boat.]]
+- [[#do-it-yourself-diy-and-as-a-bisos-general-purpose-server-appliance-bisos-gpsa][Do It Yourself (DIY) And As A BISOS General Purpose Server Appliance (BISOS-GPSA)]]
+- [[#main-steps][Main Steps]]
+  - [[#tethering-to-mobile-phone][Tethering To Mobile Phone]]
+  - [[#ethernetnetwork-interface-naming-----snpa-ids-subnetwork-point-of-attachement-identifiers][Ethernet/Network interface naming --- SNPA-Ids (Subnetwork Point-Of-Attachement Identifiers)]]
+  - [[#install-and-configure-dhcpd-on-our-router][Install and configure dhcpd on our router]]
+- [[#add-ons-considerations][Add-Ons Considerations]]
+  - [[#in-combination-with-other-links-as-a-failover-wan-router][In combination With Other Links As a Failover WAN-Router]]
+  - [[#in-combination-with-a-wi-fi-bridge][In combination with a Wi-Fi bridge]]
+- [[#ipforwarding-general-purpose-server-appliance-----bisos-gspa][IPForwarding General Purpose Server Appliance --- BISOS-GSPA]]
+
+* Scope
+** This is not just about usb tethering. We also create a LAN.
+** This is not about usb tethering with en existing. We create our own router.
+
+* Uses
+** A secondary WAN router
+** A Failover router
+** A Mobile LAN. Say inside of an RV or a Boat.
+
+* Do It Yourself (DIY) And As A BISOS General Purpose Server Appliance (BISOS-GPSA)
+The information in here is provided as DIY instructions.
+We are assuming that you are
+
+* Main Steps
+** Tethering To Mobile Phone
+As of 2022, tethering to mobile phones is quite reliable with Linux.
+We used an Android phone provisioned over T-Mobile in the US.
+To tether to mobile phone:
+- Plug USB cable into platform hardware
+- On Mobile Phone: Settings->Tehtering->USB Tethering
+- On Mobile Phone: Follow prompts
+- On our router: "ip a" should show you the link --- something like "/dev/usb0"
+- Local side of the usb phone link would be something like 192.168.42.102 --- the 102 is phone's dhcp assignment.
+- Remote side of the usb phone link would be something like 192.168.42.129
+- Verify end-to-end connectivity by pinging say 8.8.8.8
+
+If that wroks, tethering to mobile phone is in place.
+** Ethernet/Network interface naming --- SNPA-Ids (Subnetwork Point-Of-Attachement Identifiers)
+Through out the rest of this document we will be reffering to device  interfaces in a generic fashion.
+The phone USB device -- typically /dev/usb0 -- will be called "usb-snpa".
+The LAN device -- typically something like /dev/enp3s0 -- will be called "lan-snpa".
+
+** Install and configure dhcpd on our router
+
+#+begin_src bash
+sudo apt-get install isc-dhcp-server
+#+end_src
+
+Then configure a minimal dhcpd server.
+
+Relevant BISOS ICMs (Interactive Command Modules) at https://github.com/bisos/bsip4/tree/master/bin are:
+#+begin_src bash
+lcaDhcpServerBinsPrep.sh
+svcDhcpSysdAdmin.sh
+#+end_src
+
+
+
+* Add-Ons Considerations
+** In combination With Other Links As a Failover WAN-Router
+** In combination with a Wi-Fi bridge
+
+* IPForwarding General Purpose Server Appliance --- BISOS-GSPA

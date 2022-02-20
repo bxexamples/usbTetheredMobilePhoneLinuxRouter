@@ -9,11 +9,11 @@ Given:
 
 - A Mobile Phone
 - A USB Cable
-- A Laptop or a Raspberry Pi (our router)
+- A Laptop or a Raspberry Pi (OurRouter)
 - A plain Debian Linux distro
 - An ethernet switch
 
-we create a Wide-Area Mobile LAN.
+we create a Wide-Area-Wireless Mobile LAN.
 
 
 * Table Of Contents     :TOC:
@@ -26,9 +26,9 @@ we create a Wide-Area Mobile LAN.
   - [[#tethering-to-mobile-phone][Tethering To Mobile Phone]]
   - [[#ethernetnetwork-interface-naming-----snpa-ids-subnetwork-point-of-attachement-identifiers][Ethernet/Network interface naming --- SNPA-Ids (Subnetwork Point-Of-Attachement Identifiers)]]
   - [[#create-a-minimal-lan][Create a minimal LAN]]
-  - [[#install-configure-and-test-dhcpd-on-our-router][Install, configure and test dhcpd on our-router]]
-  - [[#enable-ipforwarding-on-our-router][Enable IPForwarding On Our-router]]
-  - [[#setup-nat-on-our-router][Setup NAT On Our-router]]
+  - [[#install-configure-and-test-dhcpd-on-ourrouter][Install, configure and test dhcpd on OurRouter]]
+  - [[#enable-ipforwarding-on-ourrouter][Enable IPForwarding On OurRouter]]
+  - [[#setup-nat-on-ourrouter][Setup NAT On OurRouter]]
   - [[#end-to-end-testing][End-to-End testing]]
   - [[#making-it-all-persistent][Making It All persistent]]
 - [[#add-ons-considerations][Add-Ons Considerations]]
@@ -72,14 +72,14 @@ To tether to mobile phone:
 If that wroks, tethering to mobile phone is in place.
 ** Ethernet/Network interface naming --- SNPA-Ids (Subnetwork Point-Of-Attachement Identifiers)
 Through out the rest of this document we will be reffering to device  interfaces in a generic fashion.
-The phone USB device -- typically /dev/usb0 -- will be called "usb-snpa".
-The LAN device -- typically something like /dev/enp3s0 -- will be called "lan-snpa".
+The phone USB device -- typically /dev/usb0 -- will be called "phoneSnpa".
+The LAN device -- typically something like /dev/enp3s0 -- will be called "lanSnpa".
 
 ** Create a minimal LAN
 
-Setup a minmal LAN with two hosts. Our-router and a "testing-host" on the lan-snpa.
+Setup a minmal LAN with two hosts. Let's call it "OurLan" with  OurRouter and a "TestingHost" on the lanSnpa.
 
-** Install, configure and test dhcpd on our-router
+** Install, configure and test dhcpd on OurRouter
 
 To install the dhcp server
 #+begin_src bash
@@ -96,17 +96,21 @@ svcDhcpSysdAdmin.sh
 
 Plug the testing-host on our-lan, verify that it got the right values from our-router.
 
-** Enable IPForwarding On Our-router
+** Enable IPForwarding On OurRouter
 #+begin_src bash
 echo 1 > /proc/sys/net/ipv4/ip_forward
 #+end_src
 
-** Setup NAT On Our-router
+** Setup NAT On OurRouter
+
+On OurRouter we are now going to setup a traditional NAT (Network Address Translation).
 
 #+begin_src bash
-/sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-/sbin/iptables -A FORWARD -i eth0 -o eth1 -m state  --state RELATED,ESTABLISHED -j ACCEPT
-/sbin/iptables -A FORWARD -i eth1 -o eth0 -j ACCEPT
+phoneSnpa="/dev/usb0"
+lanSnpa="/dev/enp3s0"
+/sbin/iptables -t nat -A POSTROUTING -o ${phoneSnpa} -j MASQUERADE
+/sbin/iptables -A FORWARD -i ${phoneSnpa} -o ${lanSnpa} -m state  --state RELATED,ESTABLISHED -j ACCEPT
+/sbin/iptables -A FORWARD -i ${lanSnpa} -o ${phoneSnpa} -j ACCEPT
 #+end_src
 
 ** End-to-End testing

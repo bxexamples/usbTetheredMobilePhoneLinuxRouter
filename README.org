@@ -29,12 +29,13 @@ we create a Wide-Area-Wireless Mobile LAN.
   - [[#install-configure-and-test-dhcpd-on-ourrouter][Install, configure and test dhcpd on OurRouter]]
   - [[#enable-ipforwarding-on-ourrouter][Enable IPForwarding On OurRouter]]
   - [[#setup-nat-on-ourrouter][Setup NAT On OurRouter]]
+  - [[#keep-alive-traffic-on-the-phonesnpa][Keep Alive Traffic On The phoneSnpa]]
   - [[#end-to-end-testing][End-to-End testing]]
   - [[#making-it-all-persistent][Making It All persistent]]
-- [[#add-ons-considerations][Add-Ons Considerations]]
-  - [[#in-combination-with-other-links-as-a-failover-wan-router][In combination With Other Links As a Failover WAN-Router]]
-  - [[#in-combination-with-a-wi-fi-bridge][In combination with a Wi-Fi bridge]]
 - [[#ipforwarding-general-purpose-server-appliance-----ipforwarding-bisos-gspa][IPForwarding General Purpose Server Appliance --- IPForwarding-BISOS-GSPA]]
+- [[#add-ons-considerations][Add-Ons Considerations]]
+  - [[#in-combination-with-a-wi-fi-bridge][In combination with a Wi-Fi bridge]]
+  - [[#in-combination-with-other-links-as-a-failover-wan-router][In combination With Other Links As a Failover WAN-Router]]
 
 * Scope
 ** This is not just about usb tethering.
@@ -113,6 +114,13 @@ lanSnpa="/dev/enp3s0"
 /sbin/iptables -A FORWARD -i ${lanSnpa} -o ${phoneSnpa} -j ACCEPT
 #+end_src
 
+** Keep Alive Traffic On The phoneSnpa
+
+When there has been no traffic on the phoneSnpa link, the phone drops the usb connection.
+
+To maintain the link, periodically we generate small amounts of traffic on the phoneSnpa.
+A simple ping seems to be sufficient.
+
 ** End-to-End testing
 
 With these in place, you can now ping a remote host from the testing-host. So, on testing-host try "ping 8.8.8.8".
@@ -123,19 +131,6 @@ You now have yourself a usb Tethered Mobile Phone Linux Router.
 
 These DIY instructions do not include information about making it all be
 persistent. You can do that on your own, or better yet use the IPForwarding-BISOS-GSPA.
-
-* Add-Ons Considerations
-A usb Tethered Mobile Phone Linux Router, can be more than just that.
-Here are some additions to consider.
-
-** In combination With Other Links As a Failover WAN-Router
-The usb tethered mobile phone can be considered an additional WAN link for an existing router.
-
-** In combination with a Wi-Fi bridge
-
-Our-router's hardwar platform usually includes WiFi capabilities. We can turn
-that into an access point. At that point you have the equivalent of
-Wifi-tethering plus wired LAN access plus full control.
 
 * IPForwarding General Purpose Server Appliance --- IPForwarding-BISOS-GSPA
 
@@ -148,3 +143,27 @@ To setup your BISOS IPForwarding General Purpose Server Appliance:
 - Configure your IPForwarding-BISOS-GSPA platform using supplied Blee-Panels
 - Save your specific configuration platform in your own BPO.
 - You can then reproduce your pre-configured IPForwarding-BISOS-GSPA with your own BPO.
+
+* Add-Ons Considerations
+
+A usb Tethered Mobile Phone Linux Router, can be more than just that.
+Here are some additions to consider.
+
+** In combination with a Wi-Fi bridge
+
+OurRouter's hardware platform usually includes WiFi capabilities. And when it
+does not, it can easily be added. So, we can turn OurRouter into a WiFi access
+point as well. At that point we have have the equivalent of Wifi-tethering plus
+wired LAN access plus full control.
+
+Here are some relevant links for doing that:
+
+https://github.com/morrownr/USB-WiFi
+http://www.linuxintro.org/wiki/Set_up_a_hotspot_with_Linux
+https://www.how2shout.com/how-to/2-ways-to-create-wifi-hotspot-in-ubuntu-20-04-lts-focal-fossa.html
+https://developer.toradex.com/knowledge-base/wi-fi-access-point-mode
+https://www.cyberciti.biz/faq/debian-ubuntu-linux-setting-wireless-access-point/
+https://wiki.lm-technologies.com/linux-wifi-access-point-wireless-ap/
+
+** In combination With Other Links As a Failover WAN-Router
+The usb tethered mobile phone can be considered an additional WAN link for an existing router.

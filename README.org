@@ -10,7 +10,7 @@ Given:
 - A Mobile Phone
 - A USB Cable
 - A Laptop or a Raspberry Pi (OurRouter)
-- A plain Debian Linux distro
+- A plain Debian Linux distro (Debian-11)
 - An ethernet switch
 
 we create a Wide-Area-Wireless Mobile LAN.
@@ -43,7 +43,8 @@ We also create a LAN. This is about providing access to the phone's data
 connectivity by all hosts on a LAN.
 
 ** This is not about USB tethering with an existing router.
-Here we create our own router from scratch. We don't add a phone to an
+Here we create our own router from scratch. We don't add a phone to an existing router.
+The scope of this document includes creation of a router on top of Debian Linux.
 
 * Uses
 

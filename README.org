@@ -1,9 +1,9 @@
-#+title:  usb Tethered Mobile Phone Linux Router
+#+title:  USB Tethered Mobile Phone Linux Router
 #+OPTIONS: toc:4
 
 Authors: [[http://mohsen.1.banan.byname.net][Mohsen Banan]] ---
 Date: <2022-02-19 Sat 19:51> ---
-Last Updated: <2022-02-19 Sat 19:51>
+Last Updated: <2022-02-22 Tue 10:53>
 
 Given:
 
@@ -19,7 +19,7 @@ we create a Wide-Area-Wireless Mobile LAN.
 * Table Of Contents     :TOC:
 - [[#scope][Scope]]
   - [[#this-is-not-just-about-usb-tethering][This is not just about usb tethering.]]
-  - [[#this-is-not-about-usb-tethering-with-an-existing-router][This is not about usb tethering with an existing router.]]
+  - [[#this-is-not-about-usb-tethering-with-an-existing-router][This is not about USB tethering with an existing router.]]
 - [[#uses][Uses]]
 - [[#do-it-yourself-diy-and-as-a-bisos-general-purpose-server-appliance-bisos-gpsa][Do It Yourself (DIY) And As A BISOS General Purpose Server Appliance (BISOS-GPSA)]]
 - [[#main-steps][Main Steps]]
@@ -42,12 +42,12 @@ we create a Wide-Area-Wireless Mobile LAN.
 We also create a LAN. This is about providing access to the phone's data
 connectivity by all hosts on a LAN.
 
-** This is not about usb tethering with an existing router.
+** This is not about USB tethering with an existing router.
 Here we create our own router from scratch. We don't add a phone to an
 
 * Uses
 
-There are manu uses for usb tethered mobile phone linux router, including:
+There are manu uses for USB tethered mobile phone linux router, including:
 
 - A secondary WAN router to be used as a spare
 - A Failover router

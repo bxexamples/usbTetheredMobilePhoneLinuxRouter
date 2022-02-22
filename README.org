@@ -54,8 +54,14 @@ There are manu uses for USB tethered mobile phone linux router, including:
 - A Mobile LAN. Say inside of an RV or a Boat.
 
 * Do It Yourself (DIY) And As A BISOS General Purpose Server Appliance (BISOS-GPSA)
-The information in here is provided as DIY instructions.
-We are assuming that you are
+
+The information in here is provided as DIY instructions. We are assuming that
+you are hip with Linux/Unix and that you can run with basic instructions and
+hints.
+
+In parallel with these DIY instructions, the equivalent of these capbilities are
+also available as a plug and play BISOS Appliance. But this document is primarily geared
+towards the DIY model.
 
 * Main Steps
 ** Tethering To Mobile Phone
